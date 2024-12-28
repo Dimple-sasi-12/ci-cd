@@ -34,7 +34,7 @@ pipeline {
         }
 	stage('rm containers and images') {
             steps {
-                sh 'docker rm $(docker ps -q) || true'
+                sh 'docker stop $(docker ps -q) || true'
                 sh 'docker rm $(docker ps -aq) || true'
                 sh 'docker rmi $(docker images -q) || true'
             }
