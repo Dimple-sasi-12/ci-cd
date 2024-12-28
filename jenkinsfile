@@ -44,7 +44,7 @@ pipeline {
                 sh 'docker build -t java .'
             }
         }
-        stage('docker push') {
+        stage('docker run container') {
             steps {
                 sh 'docker run -itd -p 8085:8081 java'
             }
