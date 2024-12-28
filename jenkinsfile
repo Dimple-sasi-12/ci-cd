@@ -13,12 +13,12 @@ pipeline {
              git 'https://github.com/Dimple-sasi-12/ci-cd.git'
             }
         }
-         stage('compile') {
+        stage('compile') {
             steps {
               sh 'mvn compile'
             }
         }
-         stage('code analysis') {
+        stage('code analysis') {
             steps {
               withSonarQubeEnv('sonarqube') {
                sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=CI-CD-Project \
@@ -32,12 +32,19 @@ pipeline {
               sh 'mvn install'
             }
         }
-         stage('docker build') {
+	stage('rm containers and images') {
+            steps {
+                sh 'docker rm $(docker ps -q) || true'
+                sh 'docker rm $(docker ps -aq) || true'
+                sh 'docker rmi $(docker images -q) || true'
+            }
+        }
+        stage('docker build') {
             steps {
                 sh 'docker build -t java .'
             }
         }
-         stage('docker push') {
+        stage('docker push') {
             steps {
                 sh 'docker run -itd -p 8085:8081'
             }
