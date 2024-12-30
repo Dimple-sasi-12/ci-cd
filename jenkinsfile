@@ -1,74 +1,75 @@
 def COLOR_MAP = [
     'SUCCESS': 'good',
     'FAILURE': 'danger'
-    ]
+]
+
 pipeline {
     agent any
-     environment {
+    environment {
         SCANNER_HOME = tool 'sonarqube'
     }
     stages {
-        stage('git checkout') {
+        stage('Git Checkout') {
             steps {
-             git branch: 'main ', url: 'https://github.com/Dimple-sasi-12/ci-cd.git'
+                git branch: 'main', url: 'https://github.com/Dimple-sasi-12/ci-cd.git'
             }
         }
-        stage('compile') {
+        stage('Compile') {
             steps {
-              sh 'mvn compile'
+                sh 'mvn compile'
             }
         }
-        stage('code analysis') {
+        stage('Code Analysis') {
             steps {
-              withSonarQubeEnv('sonarqube') {
-               sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=CI-CD-Project \
-               -Dsonar.java.binaries=. \
-               -Dsonar.projectKey=CI-CD-Project'''
-              }
+                withSonarQubeEnv('sonarqube') {
+                    sh ''' 
+                        $SCANNER_HOME/bin/sonar-scanner \
+                        -Dsonar.projectName=CI-CD-Project \
+                        -Dsonar.java.binaries=. \
+                        -Dsonar.projectKey=CI-CD-Project
+                    '''
+                }
             }
         }
-        stage('package') {
+        stage('Package') {
             steps {
-              sh 'mvn install'
+                sh 'mvn install'
             }
         }
-	stage('rm containers and images') {
+        stage('Remove Containers and Images') {
             steps {
-                sh 'docker stop $(docker ps -q) || true'
-                sh 'docker rm $(docker ps -aq) || true'
-                sh 'docker rmi $(docker images -q) || true'
+                sh ''' 
+                    docker stop $(docker ps -q) || true
+                    docker rm $(docker ps -aq) || true
+                    docker rmi $(docker images -q) || true
+                '''
             }
         }
-        stage('docker build') {
+        stage('Docker Build') {
             steps {
                 sh 'docker build -t java .'
             }
         }
-	stage('docker push') {
+        stage('Docker Push') {
             steps {
-             script {
-                withDockerRegistry(credentialsId: 'docker-credential', toolName: 'docker' {
+        	withDockerRegistry(credentialsId: 'docker-credential', toolName: 'docker', url: 'https://hub.docker.com/')  {
                     sh 'docker tag java bunny2003/ci-cd'
                     sh 'docker push bunny2003/ci-cd'
-                  }
-              }
+                }
             }
-         }    
-        stage('docker run container') {
+        }
+        stage('Docker Run Container') {
             steps {
                 sh 'docker run -itd -p 8085:8081 java'
             }
         }
-    }	
- 
+    }
     post {
         always {
-            echo 'slack Notification.'
+            echo 'Slack Notification.'
             slackSend channel: '#dev-team',
-            color: COLOR_MAP [currentBuild.currentResult],
-            message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URl}"
-            
+                color: COLOR_MAP[currentBuild.currentResult],
+                message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
         }
     }
 }
-
