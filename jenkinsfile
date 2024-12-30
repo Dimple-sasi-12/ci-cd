@@ -40,15 +40,14 @@ pipeline {
         }
         stage('Docker Build') {
             steps {
-                sh 'docker build -t java .'
+                sh 'docker build -t bunny2003/java .'
             }
         }
         stage('Docker Push') {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'docker-credential', toolName: 'docker')  {
-                    sh 'docker tag java bunny2003/ci-cd'
-                    sh 'docker push bunny2003/ci-cd'
+                    sh 'docker push bunny2003/java'
                     }
                 }
             }
