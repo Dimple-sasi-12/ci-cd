@@ -44,6 +44,16 @@ pipeline {
                 sh 'docker build -t java .'
             }
         }
+	stage('docker push') {
+            steps {
+             script {
+                withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                    sh 'docker tag java bunny2003/ci-cd'
+                    sh 'docker push bunny2003/ci-cd'
+                  }
+              }
+            }
+         }    
         stage('docker run container') {
             steps {
                 sh 'docker run -itd -p 8085:8081 java'
