@@ -16,7 +16,7 @@ pipeline {
         }
         stage('Compile') {
             steps {
-                sh 'mvn compile'
+                sh 'mvn clean compile'
             }
         }
         stage('Code Analysis') {
@@ -24,16 +24,11 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     sh ''' 
                         $SCANNER_HOME/bin/sonar-scanner \
-                        -Dsonar.projectName=CI-CD-Project \
+                        -Dsonar.projectName=ci-cd \
                         -Dsonar.java.binaries=. \
-                        -Dsonar.projectKey=CI-CD-Project
+                        -Dsonar.projectKey=ci-cd
                     '''
                 }
-            }
-        }
-        stage('Package') {
-            steps {
-                sh 'mvn install'
             }
         }
         stage('Remove Containers and Images') {
