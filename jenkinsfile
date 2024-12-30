@@ -39,8 +39,8 @@ pipeline {
         stage('Remove Containers and Images') {
             steps {
                 sh 'docker stop $(docker ps -q) || true'
-                    'docker rm $(docker ps -aq) || true'
-                    'docker rmi $(docker images -q) || true'
+                sh 'docker rm $(docker ps -aq) || true'
+                sh 'docker rmi $(docker images -q) || true'
             }
         }
         stage('Docker Build') {
