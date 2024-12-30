@@ -47,7 +47,7 @@ pipeline {
 	stage('docker push') {
             steps {
              script {
-                withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                withDockerRegistry(credentialsId: 'docker-credentials', toolName: 'docker') {
                     sh 'docker tag java bunny2003/ci-cd'
                     sh 'docker push bunny2003/ci-cd'
                   }
