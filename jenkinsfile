@@ -38,11 +38,9 @@ pipeline {
         }
         stage('Remove Containers and Images') {
             steps {
-                sh ''' 
-                    docker stop $(docker ps -q) || true
-                    docker rm $(docker ps -aq) || true
-                    docker rmi $(docker images -q) || true
-                '''
+                sh 'docker stop $(docker ps -q) || true'
+                    'docker rm $(docker ps -aq) || true'
+                    'docker rmi $(docker images -q) || true'
             }
         }
         stage('Docker Build') {
@@ -52,9 +50,11 @@ pipeline {
         }
         stage('Docker Push') {
             steps {
-                withDockerRegistry(credentialsId: 'docker-credential', toolName: 'docker')  {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-credential', toolName: 'docker')  {
                     sh 'docker tag java bunny2003/ci-cd'
                     sh 'docker push bunny2003/ci-cd'
+                    }
                 }
             }
         }
