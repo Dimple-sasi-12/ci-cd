@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Dimple-sasi-12/ci-cd.git'
+                git branch: 'branch1', url: 'https://github.com/Dimple-sasi-12/ci-cd.git'
             }
         }
         stage('Compile') {
