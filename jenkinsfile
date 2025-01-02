@@ -45,8 +45,10 @@ pipeline {
         }
         stage('docker push') {
             steps {
-                withDockerRegistry(credentialsId: 'docker-credential', toolName: 'docker') {
-                    sh 'docker push bunny2003/java'
+                script {
+                    withDockerRegistry(credentialsId: 'docker-credential', toolName: 'docker') {
+                        sh 'docker push bunny2003/java'
+                    }
                 }
             }
         }
