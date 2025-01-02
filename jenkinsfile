@@ -43,9 +43,16 @@ pipeline {
                 sh 'docker build -t bunny2003/java .'
             }
         }
+        stage('docker push') {
+            steps {
+                withDockerRegistry(credentialsId: 'docker-credential', toolName: 'docker') {
+                    sh 'docker push bunny2003/java'
+                }
+            }
+        }
         stage('Docker Run Container') {
             steps {
-                sh 'docker run -itd -p 8085:8081 java'
+                sh 'docker run -itd -p 8085:8081 bunny2003/java'
             }
         }
     }
