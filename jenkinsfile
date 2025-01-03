@@ -38,12 +38,17 @@ pipeline {
                 sh 'docker rmi $(docker images -q) || true'
             }
         }
+        stage('trivy-scan dockerfile') {
+            steps {
+                sh 'trivy --severity LOW,MEDIUM -f table -o file-scan.html Dockerfile'
+            }
+        }
         stage('Docker Build') {
             steps {
                 sh 'docker build -t bunny2003/java .'
             }
         }
-        stage('trivy') {
+        stage('trivy-scan images') {
             steps {
                 sh 'trivy --severity LOW,MEDIUM -f table -o image-scan.html bunny2003/java'
             }
