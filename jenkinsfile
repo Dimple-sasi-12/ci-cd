@@ -31,16 +31,16 @@ pipeline {
                 }
             }
         }
+        stage('trivy-scan file') {
+            steps {
+                sh 'trivy --severity LOW,MEDIUM -f table -o file-scan.html .'
+            }
+        }
         stage('Remove Containers and Images') {
             steps {
                 sh 'docker stop $(docker ps -q) || true'
                 sh 'docker rm $(docker ps -aq) || true'
                 sh 'docker rmi $(docker images -q) || true'
-            }
-        }
-        stage('trivy-scan dockerfile') {
-            steps {
-                sh 'trivy --severity LOW,MEDIUM -f table -o file-scan.html Dockerfile'
             }
         }
         stage('Docker Build') {
