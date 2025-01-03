@@ -38,7 +38,7 @@ pipeline {
         }
         stage('trivy-scan file') {
             steps {
-                sh 'trivy fs --severity HIGH,CRITICAL -f json -o file-scan.json .'
+                sh 'trivy fs --secutiry-checks vuln --severity HIGH,CRITICAL -f json -o file-scan.json .'
             }
         }
         stage('Remove Containers and Images') {
