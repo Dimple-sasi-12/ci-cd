@@ -9,6 +9,11 @@ pipeline {
         SCANNER_HOME = tool 'sonarqube'
     }
     stages {
+        stage('clean-workspace') {
+            steps {
+                cleanWs  ()
+            }
+        }
         stage('Git Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Dimple-sasi-12/ci-cd.git'
